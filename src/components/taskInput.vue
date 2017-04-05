@@ -1,5 +1,7 @@
 <template>
     <div>
+        <div id="file-drop" @dragover.prevent="dragoverHandler" @drop.prevent="dropHandler" :class=" [{ disableFile: (!startOn || !stepDebugOn)}] ">Please drap your file here to upload.</div>
+
 
         <input type="text" v-model="newTask.cpuTime">
         <input type="text" v-model="newTask.pid">
@@ -10,7 +12,16 @@
 
     </div>
 </template>
-<style>
+<style lang="sass">
+    #file-drop{
+        height: 100px;
+    }
+    .enable-file{
+        color: black;
+    }
+    .disableFile{
+        color: #eee;
+    }
 
 </style>
 <script>
@@ -22,11 +33,16 @@
         computed:{
             ...mapGetters([
                 'startOn',
+                'stepDebugOn',
                 'getCurrentTasks'
             ])
         },
         data: function () {
             return {
+                fileDropClass:{
+                    'enable-file':(this.startOn || this.stepDebugOn),
+                    'disable-file':(!this.startOn && !this.stepDebugOn),
+                },
                 newTask:{
                     cpuTime:0,
                     pid:-1,
@@ -45,6 +61,47 @@
                 temp.priority = Number(temp.priority);
                 this.addCurrentTask([temp]);
                 this.eventHub.$emit('addNewTask', temp);
+            },
+            dragoverHandler (){
+
+            },
+            dropHandler(e){
+                if(!this.startOn ||  !this.stepDebugOn){
+                    return false;
+                }else{
+                    var self = this;
+                    var reader = new FileReader();
+
+                    var file = e.dataTransfer.files[0];
+                    var result;
+                    reader.readAsText(file);
+
+                    reader.addEventListener('load', function(){
+                        result = reader.result;
+                        var records = [];
+                        var resultLines = result.split('\n');
+                        for(let r of resultLines){
+                            if(r == ""){
+                                continue;
+                            }
+
+                            var record = r.split('\t');
+                            var temp = {};
+                            temp.pid = record[0];
+                            temp.arriveTime = Number(record[1]);
+                            temp.cpuTime = Number(record[2]);
+                            temp.priority = Number(record[3]);
+
+                            records.push(temp);
+                        }
+
+                        console.log(...records);
+                        self.addCurrentTask(records);
+
+                    })
+                }
+
+
             }
         }
     }

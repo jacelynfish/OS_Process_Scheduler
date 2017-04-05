@@ -1746,15 +1746,30 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 var _vuex = __webpack_require__(0);
 
 exports.default = {
     created: function created() {},
 
-    computed: _extends({}, (0, _vuex.mapGetters)(['startOn', 'getCurrentTasks'])),
+    computed: _extends({}, (0, _vuex.mapGetters)(['startOn', 'stepDebugOn', 'getCurrentTasks'])),
     data: function data() {
         return {
+            fileDropClass: {
+                'enable-file': this.startOn || this.stepDebugOn,
+                'disable-file': !this.startOn && !this.stepDebugOn
+            },
             newTask: {
                 cpuTime: 0,
                 pid: -1,
@@ -1772,6 +1787,65 @@ exports.default = {
             temp.priority = Number(temp.priority);
             this.addCurrentTask([temp]);
             this.eventHub.$emit('addNewTask', temp);
+        },
+        dragoverHandler: function dragoverHandler() {},
+        dropHandler: function dropHandler(e) {
+            if (!this.startOn || !this.stepDebugOn) {
+                return false;
+            } else {
+                var self = this;
+                var reader = new FileReader();
+
+                var file = e.dataTransfer.files[0];
+                var result;
+                reader.readAsText(file);
+
+                reader.addEventListener('load', function () {
+                    var _console;
+
+                    result = reader.result;
+                    var records = [];
+                    var resultLines = result.split('\n');
+                    var _iteratorNormalCompletion = true;
+                    var _didIteratorError = false;
+                    var _iteratorError = undefined;
+
+                    try {
+                        for (var _iterator = resultLines[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                            var r = _step.value;
+
+                            if (r == "") {
+                                continue;
+                            }
+
+                            var record = r.split('\t');
+                            var temp = {};
+                            temp.pid = record[0];
+                            temp.arriveTime = Number(record[1]);
+                            temp.cpuTime = Number(record[2]);
+                            temp.priority = Number(record[3]);
+
+                            records.push(temp);
+                        }
+                    } catch (err) {
+                        _didIteratorError = true;
+                        _iteratorError = err;
+                    } finally {
+                        try {
+                            if (!_iteratorNormalCompletion && _iterator.return) {
+                                _iterator.return();
+                            }
+                        } finally {
+                            if (_didIteratorError) {
+                                throw _iteratorError;
+                            }
+                        }
+                    }
+
+                    (_console = console).log.apply(_console, records);
+                    self.addCurrentTask(records);
+                });
+            }
         }
     })
 };
@@ -1932,28 +2006,28 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     on: {
       "click": _vm.run
     }
-  }, [_vm._v("开始")]), _vm._v(" "), _c('button', {
+  }, [_vm._v("start")]), _vm._v(" "), _c('button', {
     attrs: {
       "disabled": !_vm.stepDebugOn || _vm.startOn
     },
     on: {
       "click": _vm.stop
     }
-  }, [_vm._v("停止")]), _vm._v(" "), _c('button', {
+  }, [_vm._v("stop")]), _vm._v(" "), _c('button', {
     attrs: {
       "disabled": !_vm.stepDebugOn || (_vm.startOn || !_vm.pauseOn)
     },
     on: {
       "click": _vm.pause
     }
-  }, [_vm._v("暂停")]), _vm._v(" "), _c('button', {
+  }, [_vm._v("pause")]), _vm._v(" "), _c('button', {
     attrs: {
       "disabled": !_vm.stepDebugOn || (_vm.startOn || _vm.pauseOn)
     },
     on: {
       "click": _vm.con
     }
-  }, [_vm._v("继续")]), _vm._v(" "), _c('button', {
+  }, [_vm._v("continue")]), _vm._v(" "), _c('button', {
     attrs: {
       "disabled": !_vm.startOn
     },
@@ -1998,7 +2072,24 @@ if (false) {
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', [_c('input', {
+  return _c('div', [_c('div', {
+    class: [{
+      disableFile: (!_vm.startOn || !_vm.stepDebugOn)
+    }],
+    attrs: {
+      "id": "file-drop"
+    },
+    on: {
+      "dragover": function($event) {
+        $event.preventDefault();
+        _vm.dragoverHandler($event)
+      },
+      "drop": function($event) {
+        $event.preventDefault();
+        _vm.dropHandler($event)
+      }
+    }
+  }, [_vm._v("Please drap your file here to upload.")]), _vm._v(" "), _c('input', {
     directives: [{
       name: "model",
       rawName: "v-model",
@@ -2078,7 +2169,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     on: {
       "click": _vm.addTask
     }
-  }, [_vm._v("加")])])
+  }, [_vm._v("add")])])
 },staticRenderFns: []}
 module.exports.render._withStripped = true
 if (false) {
@@ -2107,7 +2198,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
           _vm.deleteTask(key)
         }
       }
-    }, [_vm._v("删除")])])
+    }, [_vm._v("delete")])])
   })), _vm._v(" "), _c('task-input'), _vm._v(" "), _c('scheduler')], 1)
 },staticRenderFns: []}
 module.exports.render._withStripped = true

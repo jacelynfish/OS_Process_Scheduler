@@ -30,7 +30,7 @@ to be completed.
 
 - [x] Shared states management
 
-- [ ] File drag-drop and upload
+- [x] File drag-drop and upload
 
 - [ ] Timing calculations including each wating and turnaround time as well as average turn around time
 
@@ -38,7 +38,6 @@ to be completed.
 
 - [ ] Server implementation
 
-      ​
 
 ## More information
 
