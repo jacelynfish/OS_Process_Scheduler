@@ -32,7 +32,9 @@ to be completed.
 
 - [x] File drag-drop and upload
 
-- [ ] Timing calculations including each wating and turnaround time as well as average turn around time
+- [x] Timing calculations including each wating and turnaround time as well as average turn around time
+
+- [ ] CSS layouts and styling
 
 - [ ] Database implementation
 
