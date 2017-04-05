@@ -1171,6 +1171,7 @@ function PreScheduler(options) {
             for (var _iterator = enterQueue[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
                 var task = _step.value;
 
+                task.endTime = -1;
                 task.isOn = false;
                 task.remainTime = task.cpuTime;
                 task.timeSlot = timeSlot;
@@ -1319,9 +1320,9 @@ function PreScheduler(options) {
                 timer = false;
 
                 if (currentTask.remainTime == 0) {
-                    currentTask.endTime = options.timeElapse;
+                    currentTask.endTime = options.timeElapse - 1;
                 }
-                if (currentTask.timeSlot == 0) {
+                if (currentTask.timeSlot == 0 && currentTask.remainTime != 0) {
                     currentTask.timeSlot = timeSlot;
                     taskQueue.push(currentTask);
                 }
@@ -1342,7 +1343,6 @@ function PreScheduler(options) {
                 }
                 runningQueue.push(currentTask.pid);
 
-                //console.log(options.timeElapse, currentTask.pid, currentTask.remainTime, currentTask.priority);
                 addTime();
 
                 if (!isStepDebug && isSame) {
@@ -1366,7 +1366,7 @@ function PreScheduler(options) {
                 for (var _iterator2 = records[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
                     var r = _step2.value;
 
-                    console.log(options.timeElapse, 'Job ' + r.pid + ' came into queue');
+                    //console.log(options.timeElapse, `Job ${r.pid} came into queue`);
                     r.remainTime = r.cpuTime;
                     r.isOn = false;
                 }
@@ -1399,11 +1399,10 @@ function PreScheduler(options) {
 
         //ensure the currentTask is not an empty object
         if (options.type == 'preemptive') {
-            if (Object.keys(currentTask).length && currentTask.remainTime) {
+            if (Object.keys(currentTask).length) {
                 taskQueue.push(currentTask);
             }
         }
-
         (_taskQueue = taskQueue).push.apply(_taskQueue, _toConsumableArray(tasks));
         if (isStepDebug) {
             stepDebugNext = true;
@@ -1456,6 +1455,30 @@ Object.defineProperty(exports, "__esModule", {
 });
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -1609,6 +1632,9 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 //
 //
 //
+//
+//
+//
 
 var _Scheduler = __webpack_require__(7);
 
@@ -1625,6 +1651,7 @@ exports.default = {
         startOn: 'startOn',
         pauseOn: 'pauseOn',
         stepDebugOn: 'stepDebugOn'
+
     })),
     created: function created() {
         //            this.tasks = this.getCurrentTasks;
@@ -1635,6 +1662,7 @@ exports.default = {
     data: function data() {
         return {
             debugSwitchMes: 'start stepping over',
+            aWaitingTimeStr: '',
             isSecondChoose: false,
             isStepFirstTime: true,
             schedulerType: {
@@ -1664,6 +1692,7 @@ exports.default = {
             if (this.stepDebugOn == true) {
                 this.toggleDebugOn(false);
                 this.debugSwitchMes = 'stop stepping over';
+                this.aWaitingTimeStr = '';
 
                 this.options.queue = this.tasks;
                 this.options.isStepDebug = true;
@@ -1676,6 +1705,8 @@ exports.default = {
                 this.scheduler = {};
                 this.options.taskQueue = [];
                 this.options.runningQueue = [];
+
+                this.calATime();
             }
         },
         debugNextStep: function debugNextStep() {
@@ -1685,6 +1716,7 @@ exports.default = {
         run: function run() {
             this.toggleStartOn(false);
             this.togglePauseOn(true);
+            this.aWaitingTimeStr = '';
 
             this.options.queue = this.tasks;
             this.options.isStepDebug = false;
@@ -1702,6 +1734,8 @@ exports.default = {
             this.scheduler = {};
             this.options.taskQueue = [];
             this.options.runningQueue = [];
+
+            this.calATime();
         },
         con: function con() {
             this.togglePauseOn(true);
@@ -1715,6 +1749,25 @@ exports.default = {
             if (!this.startOn || !this.stepDebugOn) {
                 this.scheduler.add(task);
             }
+        },
+        calATime: function calATime() {
+            var tempStr = '(',
+                totalTime = 0;
+            for (var i = 0; i < this.tasks.length; i++) {
+                var task = this.tasks[i];
+                var waitingTime = task.endTime - task.arriveTime - task.cpuTime;
+                tempStr += waitingTime;
+                if (i != this.tasks.length - 1) {
+                    tempStr += ' + ';
+                } else {
+                    tempStr += ')/' + this.tasks.length + ' = ';
+                }
+
+                totalTime += waitingTime;
+            }
+            tempStr += Number(totalTime / this.tasks.length).toFixed(2);
+
+            this.aWaitingTimeStr = tempStr;
         }
     })
 
@@ -2041,7 +2094,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     on: {
       "click": _vm.debugNextStep
     }
-  }, [_vm._v("next step")]), _vm._v(" "), _c('div', [_vm._v("\n        Ready Queue\n        "), _c('ul', {
+  }, [_vm._v("next step")]), _vm._v(" "), _c('div', [_c('p', [_vm._v("Average waiting time: " + _vm._s(_vm.aWaitingTimeStr))])]), _vm._v(" "), _c('div', [_vm._v("\n        Ready Queue\n        "), _c('ul', {
     attrs: {
       "id": "task-queue"
     }
@@ -2089,7 +2142,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         _vm.dropHandler($event)
       }
     }
-  }, [_vm._v("Please drap your file here to upload.")]), _vm._v(" "), _c('input', {
+  }, [_vm._v("\n        Please drap your file here to upload.\n    ")]), _vm._v(" "), _c('input', {
     directives: [{
       name: "model",
       rawName: "v-model",
@@ -2184,12 +2237,12 @@ if (false) {
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', [_c('ul', {
+  return _c('div', [_c('table', {
     attrs: {
       "id": "current-task-panel"
     }
-  }, _vm._l((_vm.getCurrentTasks), function(task, key) {
-    return _c('li', [_vm._v("\n            " + _vm._s(task.pid) + ", " + _vm._s(task.cpuTime) + ", " + _vm._s(task.priority) + ",\n            "), _c('button', {
+  }, [_vm._m(0), _vm._v(" "), _c('tbody', _vm._l((_vm.getCurrentTasks), function(task, key) {
+    return _c('tr', [_c('td', [_vm._v(_vm._s(task.pid))]), _vm._v(" "), _c('td', [_vm._v(_vm._s(task.arriveTime))]), _vm._v(" "), _c('td', [_vm._v(_vm._s(task.cpuTime))]), _vm._v(" "), _c('td', [_vm._v(_vm._s(task.priority))]), _vm._v(" "), _c('td', [_vm._v(_vm._s(task.endTime >= 0 ? task.endTime : NaN))]), _vm._v(" "), _c('td', [_vm._v(_vm._s(task.endTime >= 0 ? task.endTime - task.arriveTime : NaN))]), _vm._v(" "), _c('td', [_vm._v(_vm._s(task.endTime >= 0 ? task.endTime - task.arriveTime - task.cpuTime : NaN))]), _vm._v(" "), _c('td', [_c('button', {
       attrs: {
         "disabled": !_vm.startOn || !_vm.stepDebugOn
       },
@@ -2198,9 +2251,11 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
           _vm.deleteTask(key)
         }
       }
-    }, [_vm._v("delete")])])
-  })), _vm._v(" "), _c('task-input'), _vm._v(" "), _c('scheduler')], 1)
-},staticRenderFns: []}
+    }, [_vm._v("delete")])])])
+  }))]), _vm._v(" "), _c('task-input'), _vm._v(" "), _c('scheduler')], 1)
+},staticRenderFns: [function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('thead', [_c('th', [_vm._v("pid")]), _vm._v(" "), _c('th', [_vm._v("arrive time")]), _vm._v(" "), _c('th', [_vm._v("cpu time")]), _vm._v(" "), _c('th', [_vm._v("priority")]), _vm._v(" "), _c('th', [_vm._v("end time")]), _vm._v(" "), _c('th', [_vm._v("turnaround time")]), _vm._v(" "), _c('th', [_vm._v("waiting time")]), _vm._v(" "), _c('th', [_vm._v("delete")])])
+}]}
 module.exports.render._withStripped = true
 if (false) {
   module.hot.accept()

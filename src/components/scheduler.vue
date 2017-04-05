@@ -15,6 +15,9 @@
         <button @click="debugNextStep" :disabled="!startOn || stepDebugOn">next step</button>
 
         <div>
+            <p>Average waiting time: {{aWaitingTimeStr}}</p>
+        </div>
+        <div>
             Ready Queue
             <ul id="task-queue">
                 <li class="task-queue-item" v-for="task in options.taskQueue">{{task.pid}}</li>
@@ -52,7 +55,8 @@
                 tasks: 'getCurrentTasks',
                 startOn: 'startOn',
                 pauseOn: 'pauseOn',
-                stepDebugOn : 'stepDebugOn'
+                stepDebugOn : 'stepDebugOn',
+                
             })
         },
         created (){
@@ -63,6 +67,7 @@
         data: function(){
             return {
                 debugSwitchMes:'start stepping over',
+                aWaitingTimeStr:'',
                 isSecondChoose: false,
                 isStepFirstTime: true,
                 schedulerType:{
@@ -101,6 +106,7 @@
                 if(this.stepDebugOn == true){
                     this.toggleDebugOn(false);
                     this.debugSwitchMes = 'stop stepping over';
+                    this.aWaitingTimeStr = '';
 
                     this.options.queue = this.tasks;
                     this.options.isStepDebug = true;
@@ -115,6 +121,8 @@
                     this.scheduler = {};
                     this.options.taskQueue = [];
                     this.options.runningQueue = [];
+
+                    this.calATime();
                 }
 
 
@@ -125,12 +133,14 @@
             run:function (){
                 this.toggleStartOn(false);
                 this.togglePauseOn(true);
+                this.aWaitingTimeStr = '';
 
                 this.options.queue = this.tasks;
                 this.options.isStepDebug = false;
                 this.scheduler = new Scheduler(this.options);
 
                 this.scheduler.start();
+
             },
 
             stop: function(){
@@ -142,6 +152,9 @@
                 this.scheduler = {};
                 this.options.taskQueue = [];
                 this.options.runningQueue = [];
+
+                this.calATime();
+
             },
             con: function(){
                 this.togglePauseOn(true);
@@ -156,6 +169,25 @@
                     this.scheduler.add(task);
                 }
 
+            },
+            calATime(){
+                var tempStr = '(', totalTime = 0;
+                for(let i = 0; i < this.tasks.length; i++){
+                    var task = this.tasks[i];
+                    var waitingTime = task.endTime - task.arriveTime - task.cpuTime;
+                    tempStr += waitingTime;
+                    if(i != this.tasks.length - 1){
+                        tempStr += ' + ';
+                    }else{
+                        tempStr += `)/${this.tasks.length} = `;
+                    }
+
+                    totalTime += waitingTime;
+
+                }
+                tempStr += Number(totalTime / this.tasks.length).toFixed(2);
+
+                this.aWaitingTimeStr = tempStr;
             }
         }
 

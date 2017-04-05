@@ -1,6 +1,9 @@
 <template>
     <div>
-        <div id="file-drop" @dragover.prevent="dragoverHandler" @drop.prevent="dropHandler" :class=" [{ disableFile: (!startOn || !stepDebugOn)}] ">Please drap your file here to upload.</div>
+        <div id="file-drop" @dragover.prevent="dragoverHandler" @drop.prevent="dropHandler"
+             :class=" [{ disableFile: (!startOn || !stepDebugOn)}] ">
+            Please drap your file here to upload.
+        </div>
 
 
         <input type="text" v-model="newTask.cpuTime">
@@ -15,9 +18,6 @@
 <style lang="sass">
     #file-drop{
         height: 100px;
-    }
-    .enable-file{
-        color: black;
     }
     .disableFile{
         color: #eee;

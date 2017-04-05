@@ -44,6 +44,7 @@ function PreScheduler(options){
 
         enterQueue = timeSort(enterQueue,'arriveTime');
         for(let task of enterQueue){
+            task.endTime = -1;
             task.isOn = false;
             task.remainTime = task.cpuTime;
             task.timeSlot = timeSlot;
@@ -185,9 +186,9 @@ function PreScheduler(options){
 
 
                 if(currentTask.remainTime == 0){
-                    currentTask.endTime = options.timeElapse;
+                    currentTask.endTime = options.timeElapse - 1;
                 }
-                if(currentTask.timeSlot == 0){
+                if(currentTask.timeSlot == 0 && currentTask.remainTime != 0){
                     currentTask.timeSlot = timeSlot;
                     taskQueue.push(currentTask);
                 }
@@ -209,7 +210,6 @@ function PreScheduler(options){
                 }
                 runningQueue.push(currentTask.pid);
 
-                //console.log(options.timeElapse, currentTask.pid, currentTask.remainTime, currentTask.priority);
                 addTime();
 
                 if (!isStepDebug && isSame) {
@@ -226,7 +226,7 @@ function PreScheduler(options){
             clearInterval(elapseTimer);
             var records = record.get(options.timeElapse);
             for(let r of records){
-                 console.log(options.timeElapse, `Job ${r.pid} came into queue`);
+                 //console.log(options.timeElapse, `Job ${r.pid} came into queue`);
                 r.remainTime = r.cpuTime;
                 r.isOn = false;
 
@@ -245,11 +245,10 @@ function PreScheduler(options){
 
         //ensure the currentTask is not an empty object
         if(options.type == 'preemptive'){
-            if(Object.keys(currentTask).length && currentTask.remainTime){
+            if(Object.keys(currentTask).length){
                 taskQueue.push(currentTask);
             }
         }
-
         taskQueue.push(...tasks);
         if(isStepDebug){
             stepDebugNext = true;

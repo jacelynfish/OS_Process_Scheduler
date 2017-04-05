@@ -1,12 +1,36 @@
 <template>
     <div>
-        <ul id="current-task-panel">
-            <li v-for="(task, key) in getCurrentTasks">
-                {{task.pid}}, {{task.cpuTime}}, {{task.priority}},
-                <button @click="deleteTask(key)" :disabled="!startOn || !stepDebugOn">delete</button>
+        <!--<ul >-->
+            <!--<li v-for="(task, key) in getCurrentTasks">-->
+                <!--{{task.pid}}, {{task.cpuTime}}, {{task.priority}},-->
+                <!--<button @click="deleteTask(key)" :disabled="!startOn || !stepDebugOn">delete</button>-->
 
-            </li>
-        </ul>
+            <!--</li>-->
+        <!--</ul>-->
+        <table id="current-task-panel">
+            <thead>
+                <th>pid</th>
+                <th>arrive time</th>
+                <th>cpu time</th>
+                <th>priority</th>
+                <th>end time</th>
+                <th>turnaround time</th>
+                <th>waiting time</th>
+                <th>delete</th>
+            </thead>
+            <tbody>
+                <tr v-for="(task, key) in getCurrentTasks">
+                    <td>{{task.pid}}</td>
+                    <td>{{task.arriveTime}}</td>
+                    <td>{{task.cpuTime}}</td>
+                    <td>{{task.priority}}</td>
+                    <td>{{task.endTime >= 0? task.endTime: NaN}}</td>
+                    <td>{{task.endTime >= 0? task.endTime - task.arriveTime: NaN}}</td>
+                    <td>{{task.endTime >= 0? task.endTime - task.arriveTime - task.cpuTime: NaN}}</td>
+                    <td><button @click="deleteTask(key)" :disabled="!startOn || !stepDebugOn">delete</button></td>
+                </tr>
+            </tbody>
+        </table>
         <task-input></task-input>
         <scheduler></scheduler>
     </div>
