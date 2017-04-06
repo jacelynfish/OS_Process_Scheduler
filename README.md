@@ -34,7 +34,7 @@ to be completed.
 
 - [x] Timing calculations including each wating and turnaround time as well as average turn around time
 
-- [ ] CSS layouts and styling
+- [x] CSS layouts and styling
 
 - [ ] Database implementation
 

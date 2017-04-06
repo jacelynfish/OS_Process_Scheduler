@@ -13,18 +13,9 @@ module.exports = {
 	},
 	output:{
 		path: path.resolve(__dirname, './public'),
-		// publicPath: "/",
 		filename:"[name].bundle.js"
-		// filename:"[name].bundle.js"
-
 	},
-	// devServer:{
-	// 	contentBase: path.resolve(__dirname, 'dist'),
-	// 	inline: true,
-	// 	hot:true,
-	// 	stats:'errors-only'
-    //
-	// },
+
 	module: {
 		rules : [
 			{

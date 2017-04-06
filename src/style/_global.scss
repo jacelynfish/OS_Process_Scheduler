@@ -1,0 +1,125 @@
+$gColor : #1BBDCC;
+$tColor: #6E7E7F;
+$bColor: #f9f9f9;
+$borderColor: #cecece;
+
+$gFont : 'fontin-bold';
+*::selection{
+  background-color: $gColor;
+  color: white;
+}
+@font-face {
+  font-family: 'fontin-bold';
+  src: url('../static/font/Fontin-Bold.ttf'),
+  url('../static/font/Fontin-Bold.otf');
+}
+
+@font-face {
+  font-family: 'fontin-reg';
+  src: url('../static/font/Fontin-Regular.ttf'),
+  url('../static/font/Fontin-Regular.otf');
+}
+
+fieldset {
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background-color: $bColor;
+  padding: 1em;
+  box-sizing: border-box;
+}
+
+legend {
+  font-family: $gFont;
+  font-size: 1.2em;
+  color: $gColor;
+  padding: 0 1em;
+
+}
+
+.btn{
+  outline: none;
+  border: 1px solid $gColor;
+  color: $gColor;
+  padding: 0 4px;
+  background-color: white;
+  border-radius: 4px;
+  line-height: 1.5;
+  font-family: 'fontin-reg';
+}
+.btn-sm{
+  @extend .btn;
+  font-size: 12px;
+}
+
+.btn-md{
+  @extend .btn;
+  font-size: 16px;
+}
+
+.btn-disabled{
+
+  color: $tColor;
+  border-color: $tColor;
+
+}
+
+.btn:hover{
+  background-color: $gColor;
+  color: white;
+  transition: all 0.3s;
+}
+.btn:focus{
+  outline: none;
+}
+.btn-disabled:hover{
+  background-color: white;
+  color: $tColor;
+}
+
+input[type=text]{
+  padding: 0 6px;
+  line-height: 1.5;
+  font-size: 14px;
+  color: $gColor;
+  border: 1px solid $borderColor;
+  border-radius: 4px;
+}
+
+input:focus{
+  outline: none;
+  border-color: $gColor;
+}
+
+select{
+  height: 2em;
+  line-height: 2em;
+  color: $gColor;
+  font-size: 1em;
+  padding: 0 6px;
+  background-color: white;
+}
+
+select:focus{
+  outline: none;
+}
+
+.cclass{
+  border:1px solid transparent;
+  padding: 0 4px;
+  font-size: 14px;
+  color: white;
+  border-radius: 2px;
+  margin: 0 1px;
+  box-sizing: border-box;
+
+}
+@each $cclass, $idx in (#F2C49B, 1), (#F0C0B7,2), (#FFBE00,3),
+        (#FF8F43, 4), (#9ACC2E, 5), (#70C4B3, 6),
+        (#F5A6CD, 7), (#9679CC, 8), (#E74C3C, 9),
+        (#9FA0A0,10), (#8F767E, 11), (#4A8F54, 12),
+        (#8C2F52, 13), (#43C484, 14), (#FF6F8C, 15), (#FFC222 ,16) {
+  .cclass_tag#{$idx} {
+    @extend .cclass;
+    background-color: $cclass;
+  }
+}

@@ -18,7 +18,7 @@ function PreScheduler(options){
         self = this,
         elapseTimer = null,
         record = new Map();
-        var isFirst = true, isSame, stepDebugNext, stepDebugNextTask;
+        var isFirst = true, isSame, stepDebugNext, stepDebugNextTask, isNewTask;
 
         options.timeElapse = 0;
 
@@ -68,6 +68,13 @@ function PreScheduler(options){
     }
     function stop(){
         timer = false;
+
+        if(!~currentTask.endTime){
+            currentTask.endTime = options.timeElapse;
+            options.isCompleted = false;
+        }else{
+            options.isCompleted = true;
+        }
         clearInterval(elapseTimer);
         enterQueue = [];
         taskQueue = [];
@@ -98,6 +105,13 @@ function PreScheduler(options){
     }
 
     function stopStepScheduler(){
+        if(!~currentTask.endTime){
+            currentTask.endTime = options.timeElapse;
+            options.isCompleted = false;
+        }else{
+            options.isCompleted = true;
+        }
+
         isFirst = true;
         isSame = true;
         stepDebugNext = true;
@@ -112,13 +126,15 @@ function PreScheduler(options){
 
             if(!taskQueue.length && isNextTask){
                 if(!isStepDebug){
-                    if(isFirst){
-                        addTime();
-                    }else{
+                    // if(isFirst && !isNewTask){
+                    //     console.log('no new task');
+                    //     addTime();
+                    //
+                    // }else{
                         elapseTimer = setInterval(function(){
                             addTime();
                         },1000);
-                    }
+                    // }
 
                 }else{
                     addTime();
@@ -166,7 +182,7 @@ function PreScheduler(options){
                         setTimeout(taskProcess, 0);
                         isFirst = false;
                     }else{
-                        setTimeout(taskProcess, 1000);
+                        setTimeout(taskProcess,1000);
                     }
                 }
 
@@ -208,19 +224,19 @@ function PreScheduler(options){
                 if(options.type == 'rr'){
                     currentTask.timeSlot--;
                 }
-                runningQueue.push(currentTask.pid);
+                runningQueue.push(currentTask);
+                //console.log(currentTask.tag);
 
                 addTime();
 
                 if (!isStepDebug && isSame) {
-                    setTimeout(taskProcess, 1000);
+                    setTimeout(taskProcess,1000);
                 }
             }
         }
     }
 
     function addTime(){
-
         if(record.has(options.timeElapse)){
             isSame = false;
             clearInterval(elapseTimer);
@@ -232,14 +248,15 @@ function PreScheduler(options){
 
             }
             timer = false;
-
+            isNewTask = true;
             newTaskHandler(records);
 
         }else{
+            isNewTask = false;
             isSame = true;
         }
-
         options.timeElapse++;
+
     }
     function newTaskHandler(tasks){
 
