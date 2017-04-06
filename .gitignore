@@ -5,3 +5,4 @@ public/
 .idea/
 *.(png|gif)
 *.pdf
+src/static/
