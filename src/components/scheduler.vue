@@ -1,6 +1,5 @@
 <template>
     <div>
-
         <div id="scheduler-util">
             <div class="scheduler-item">
                 <label>Please select a preferred scheduler type: </label>

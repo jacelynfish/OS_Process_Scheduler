@@ -8,11 +8,15 @@ import global from './src/style/_global.scss';
 
 import Vue from 'vue';
 import Vuex from 'vuex';
+import VueRouter from 'vue-router';
+import container from './src/components/container.vue';
 import mainFunction from './src/components/mainFunction.vue';
-import store from './store.js'
+import store from './store.js';
+import router from './router'
 
 Vue.config.devtools = true;
 Vue.use(Vuex);
+Vue.use(VueRouter);
 
 var eventHub = new Vue();
 
@@ -21,17 +25,21 @@ Vue.mixin({
         return {
             eventHub: eventHub
         }
-    }
+    },
+
 });
 new Vue({
     el: '#app',
     template:`
-        <main-function></main-function>
+        <container></container>
     `,
     components:{
+        container,
         mainFunction,
     },
     store,
-
+    router,
 
 })
+
+// <main-function></main-function>

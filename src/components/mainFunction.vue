@@ -1,7 +1,7 @@
 <template>
-    <div id="container">
+    <div id="main-function">
         <main-header>
-            <span slot="headerUser">jacelyn</span>
+            <span slot="headerUser">hello</span>
         </main-header>
         <div id="task-util">
 
@@ -61,7 +61,7 @@
         </footer>
     </div>
 </template>
-<style lang="sass">
+<<style lang="sass">
     $gColor : #1BBDCC;
     $tColor: #6E7E7F;
     $bColor: #f9f9f9;
@@ -172,6 +172,7 @@
     import taskInput from './taskInput.vue';
     import mainHeader from './header.vue';
     export default {
+//        props:['uname'],
         components:{
             scheduler,
             taskInput,

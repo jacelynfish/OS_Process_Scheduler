@@ -4,7 +4,7 @@
         <span id="header-welcome">
             Welcome,
             <slot name="headerUser"></slot>
-            <button id="header-logout" class="btn-sm">logout</button>
+            <button id="header-logout" class="btn-sm" @click="logout">logout</button>
         </span>
     </div>
 </template>
@@ -43,6 +43,35 @@
         data : function(){
             return {
 
+            }
+        },
+        methods:{
+            logout(){
+                var self = this;
+                var xhr = new XMLHttpRequest();
+
+                var req = new Promise(function(resolve, rejected){
+                    xhr.onreadystatechange = function(){
+                        if(xhr.readyState == 4){
+                            if(xhr.status == 200 || xhr.status == 304){
+                                resolve();
+                            }
+                        }
+                    }
+
+                    xhr.open('get', '/logout');
+                    xhr.send(null);
+                })
+
+                req.then(function(){
+                    self.$router.push({
+                        name: 'login',
+                        query:{
+                            from: 'logout'
+                        }
+                    });
+//                    console.log('hey');
+                })
             }
         }
     }
