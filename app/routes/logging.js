@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var MongoClient = require('mongodb').MongoClient;
+var assert = require('assert');
 var url = 'mongodb://localhost:27017/scheduler_util';
 
 router.post('/checkUser',function(req, res, next){
@@ -21,6 +22,7 @@ router.post('/checkUser',function(req, res, next){
                     db.close();
                 }
             }).catch(function(err){
+                console.log(err);
                 res.status(err);
                 res.send("User does not exist.");
                 db.close();
@@ -62,6 +64,34 @@ router.post('/login',function(req, res, next){
     })
 
 });
+
+router.post('/register', function(req, res, next){
+    var uname = req.body.uname,
+        upw = req.body.upw;
+
+    console.log(uname, upw);
+    MongoClient.connect(url, function(err, db){
+        assert.equal(null, err);
+
+        db.collection('uaccount')
+            .insertOne({
+                uname: uname,
+                upw: upw
+            })
+            .then(function(doc){
+                req.session.nowInMinutes = getSession();
+                res.status(200);
+                res.send("successfully registered!");
+
+                db.close();
+            })
+            .catch(function(err){
+                res.status(401);
+                res.send('unseccessfully registered!');
+                db.close();
+            })
+    })
+})
 
 router.get('/logout',function(req, res, next){
     req.session = null;

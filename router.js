@@ -72,9 +72,6 @@ var router = new VueRouter({
                         query:{
                             redirect:'main_scheduer'
                         },
-                        // params:{
-                        //     uname: 'global'
-                        // }
                     });
                 }else{
                     next({
