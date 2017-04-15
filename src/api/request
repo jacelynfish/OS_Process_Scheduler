@@ -1,0 +1,20 @@
+export default function request(options = {method: 'get', url:'/', payload: null}){
+
+    var xhr = new XMLHttpRequest();
+    var req = new Promise(function(resolve, rejected){
+        xhr.onreadystatechange = function(){
+            if(xhr.readyState == 4){
+                if(xhr.status == 200 || xhr.status == 304){
+                    resolve("ok");
+                }else{
+                    rejected(xhr.responseText);
+                }
+            }
+        }
+
+        xhr.open(options.method, options.url);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.send(JSON.stringify(options.payload));
+    })
+    return req;
+}

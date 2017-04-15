@@ -49,10 +49,15 @@ router.post('/login',function(req, res, next){
                     return Promise.resolve(Promise.reject(401));
                 }else{
                     req.session.nowInMinutes = getSession();
-                    res.status(200);
-                    res.send("user info correct");
+                    req.session.uname = uname;
+                    storeSession(db, uname, req.session.nowInMinutes)
+                        .then(function(){
+                            res.status(200);
+                            res.send("user info correct");
 
-                    db.close();
+                            db.close();
+                        })
+
                 }
 
 
@@ -80,10 +85,15 @@ router.post('/register', function(req, res, next){
             })
             .then(function(doc){
                 req.session.nowInMinutes = getSession();
-                res.status(200);
-                res.send("successfully registered!");
+                req.session.uname = uname;
+                storeSession(db, uname, req.session.nowInMinutes)
+                    .then(function(){
+                        res.status(200);
+                        res.send("successfully registered!");
 
-                db.close();
+                        db.close();
+                    })
+
             })
             .catch(function(err){
                 res.status(401);
@@ -94,13 +104,34 @@ router.post('/register', function(req, res, next){
 })
 
 router.get('/logout',function(req, res, next){
-    req.session = null;
-    res.clearCookie('nsession');
-    res.clearCookie('nsession.sig');
-    res.status(200).end();
+    MongoClient.connect(url, function(err, db){
+        assert.equal(null, err);
+
+        clearSession(db, req.session.uname)
+            .then(function(){
+                req.session = null;
+                res.clearCookie('nsession');
+                res.clearCookie('nsession.sig');
+                res.status(200).end();
+            })
+            .catch(function(err){
+                res.status(401);
+                res.send('unseccessful to log out!');
+                db.close();45
+            })
+    })
+
 })
 
+function storeSession(db, uname, session){
+    return db.collection('usession')
+        .updateOne({uname: uname}, {$set: {session: session}}, {upsert: true})
+}
+function clearSession(db, uname){
+    return db.collection('usession')
+        .updateOne({uname: uname}, {$set: {session: ''}}, {upsert: true});
+}
 function getSession(){
-    return Math.floor(Date.now() / (60e3));
+    return Math.floor(Date.now() / (3e5)); //5 min
 }
 module.exports = router;

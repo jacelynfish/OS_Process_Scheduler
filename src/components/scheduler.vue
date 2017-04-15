@@ -96,6 +96,7 @@
 
 <script>
     import Scheduler from '../api/Scheduler';
+    import request from '../api/request';
     import {mapGetters, mapMutations} from 'vuex';
     export default {
 
@@ -118,7 +119,6 @@
         },
         data: function(){
             return {
-//                colors:['']
                 debugSwitchMes:'start stepping over',
                 aWaitingTimeStr:'',
                 isSecondChoose: false,
@@ -140,6 +140,13 @@
                     runningQueue:[]
                 },
                 scheduler : {},
+                currentStat:{
+                    type: 'rr',
+                    start: new Date(),
+                    end: undefined,
+                    duration: undefined,
+
+                }
             }
         },
         methods: {
@@ -172,21 +179,38 @@
                     this.options.isStepDebug = true;
                     this.scheduler = new Scheduler(this.options);
 
+                    this.currentStat.type = this.options.type;
+                    this.currentStat.start = new Date();
+
                 }
 
                 else{
                     this.toggleDebugOn(true);
                     this.debugSwitchMes = 'start stepping over';
 
-                    this.scheduler.stopStepScheduler();
-                    this.scheduler = {};
-                    this.clearTaskQueue();
-                    this.options.runningQueue = [];
 
-                    this.calATime();
+
+                    var query = '/rcrd?';
+                    for(let k of Object.keys(this.currentStat)){
+                        query += `${k}=${this.currentStat[k]}&`
+                    }
+
+1
+                    request({
+                        method:'get',
+                        url: query,
+                        payload: null,
+                    }).then(function(){
+                        this.currentStat = {};
+                        this.scheduler.stopStepScheduler();
+                        this.scheduler = {};
+                        this.clearTaskQueue();
+                        this.options.runningQueue = [];
+
+                        this.calATime();
+
+                    })
                 }
-
-
             },
             debugNextStep (){
                 this.scheduler.runStepScheduler();
@@ -204,6 +228,10 @@
                 this.options.isStepDebug = false;
                 this.scheduler = new Scheduler(this.options);
 
+
+                this.currentStat.type = this.options.type;
+                this.currentStat.start = new Date();
+
                 this.scheduler.start();
 
             },
@@ -213,12 +241,31 @@
                 this.toggleStartOn(true);
                 this.togglePauseOn(false);
 
-                this.scheduler.stop();
-                this.scheduler = {};
-                this.clearTaskQueue();
-                this.options.runningQueue = [];
+                this.currentStat.end = new Date();
+                this.currentStat.duration = this.currentStat.start - this.currentStat.end;
 
-                this.calATime();
+                var query = '/rcrd?';
+                for(let k of Object.keys(this.currentStat)){
+                    query += `${k}=${this.currentStat[k]}&`
+                }
+
+
+                request({
+                    method:'get',
+                    url: query,
+                    payload: null,
+                }).then(function(){
+                    this.currentStat = {};
+                    this.scheduler.stop();
+                    this.scheduler = {};
+                    this.clearTaskQueue();
+                    this.options.runningQueue = [];
+
+                    this.calATime();
+                })
+
+
+
 
             },
             con: function(){
@@ -260,7 +307,8 @@
 
 
                 this.aWaitingTimeStr = tempStr;
-            }
+            },
+
         }
 
     }

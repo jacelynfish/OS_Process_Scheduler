@@ -29,7 +29,7 @@ app.use(cookieSession({
     keys: ['pr0ce3schedu1er'],
 
     httpOnly: false,
-    maxAge: 1000 * 60 //1 min
+    maxAge: 1000 * 60 * 5 //5 min
 
 }))
 app.use('/', express.static(path.join(__dirname, '../public')));

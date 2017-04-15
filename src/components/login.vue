@@ -37,7 +37,7 @@
                     </div>
                     <div class="login-group">
                         <label for="login-pw">password</label>
-                        <input type="password" id="login-pw"  v-model="loginInput.upw">
+                        <input type="password" id="login-pw" v-model="loginInput.upw">
                     </div>
                 </div>
                 <div class="login-item">
@@ -118,6 +118,7 @@
              }
 
             &:hover, &:focus{
+                outline: none;
                 transition: all, 0.3s;
                 background-color: white;
                 border: 1px solid $gColor;
@@ -145,33 +146,38 @@
             width: 100%;
             box-sizing: border-box;
         }
-        span{
-            font-size: 12px;
-        }
+
+    }
+
+    .register-mes{
+
+        font-size: 12px;
+
     }
 </style>
 <script>
 
-    function request(options = {method: 'get', url:'/', payload: null}){
-
-        var xhr = new XMLHttpRequest();
-        var req = new Promise(function(resolve, rejected){
-            xhr.onreadystatechange = function(){
-                if(xhr.readyState == 4){
-                    if(xhr.status == 200 || xhr.status == 304){
-                        resolve("ok");
-                    }else{
-                        rejected(xhr.responseText);
-                    }
-                }
-            }
-
-            xhr.open(options.method, options.url);
-            xhr.setRequestHeader('Content-Type', 'application/json');
-            xhr.send(JSON.stringify(options.payload));
-        })
-        return req;
-    }
+    import request from '../api/request';
+//    function request(options = {method: 'get', url:'/', payload: null}){
+//
+//        var xhr = new XMLHttpRequest();
+//        var req = new Promise(function(resolve, rejected){
+//            xhr.onreadystatechange = function(){
+//                if(xhr.readyState == 4){
+//                    if(xhr.status == 200 || xhr.status == 304){
+//                        resolve("ok");
+//                    }else{
+//                        rejected(xhr.responseText);
+//                    }
+//                }
+//            }
+//
+//            xhr.open(options.method, options.url);
+//            xhr.setRequestHeader('Content-Type', 'application/json');
+//            xhr.send(JSON.stringify(options.payload));
+//        })
+//        return req;
+//    }
     export default {
         data: function(){
             return {
@@ -275,7 +281,8 @@
                         self.unameMes = 'Username exists. Please try another name.';
                     }
 
-                }, function(err){
+                }).catch(function(err){
+                    console.log('i');
                     if(option){
                         self.isUnameOK = false;
                         self.unameMes = 'Incorrect username!';
