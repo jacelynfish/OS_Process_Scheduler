@@ -142,6 +142,7 @@
                 scheduler : {},
                 currentStat:{
                     type: 'rr',
+                    sortedMethod: 'remainTime',
                     start: new Date(),
                     end: undefined,
                     duration: undefined,
@@ -166,6 +167,7 @@
                     this.isSecondChoose = false;
             },
             toggleDebug(){
+                var self = this;
                 if(this.stepDebugOn == true){
                     this.toggleDebugOn(false);
                     this.debugSwitchMes = 'stop stepping over';
@@ -180,13 +182,18 @@
                     this.scheduler = new Scheduler(this.options);
 
                     this.currentStat.type = this.options.type;
-                    this.currentStat.start = new Date();
+                    this.currentStat.sortedMethod = this.options.sortedMethod;
+                    this.currentStat.start = (new Date());
 
                 }
 
                 else{
                     this.toggleDebugOn(true);
                     this.debugSwitchMes = 'start stepping over';
+
+                    this.currentStat.end = (new Date());
+                    this.currentStat.duration = Number((this.currentStat.end - this.currentStat.start)/1000).toFixed(2);
+
 
 
 
@@ -195,19 +202,19 @@
                         query += `${k}=${this.currentStat[k]}&`
                     }
 
-1
+
                     request({
                         method:'get',
                         url: query,
                         payload: null,
                     }).then(function(){
-                        this.currentStat = {};
-                        this.scheduler.stopStepScheduler();
-                        this.scheduler = {};
-                        this.clearTaskQueue();
-                        this.options.runningQueue = [];
+                        self.currentStat = {};
+                        self.scheduler.stopStepScheduler();
+                        self.scheduler = {};
+                        self.clearTaskQueue();
+                        self.options.runningQueue = [];
 
-                        this.calATime();
+                        self.calATime();
 
                     })
                 }
@@ -230,6 +237,7 @@
 
 
                 this.currentStat.type = this.options.type;
+                this.currentStat.sortedMethod = this.options.sortedMethod;
                 this.currentStat.start = new Date();
 
                 this.scheduler.start();
@@ -238,11 +246,12 @@
 
             stop: function(){
 
+                var self = this;
                 this.toggleStartOn(true);
                 this.togglePauseOn(false);
 
-                this.currentStat.end = new Date();
-                this.currentStat.duration = this.currentStat.start - this.currentStat.end;
+                this.currentStat.end = (new Date());
+                this.currentStat.duration = Number((this.currentStat.end - this.currentStat.start) / 1000).toFixed(2) ;
 
                 var query = '/rcrd?';
                 for(let k of Object.keys(this.currentStat)){
@@ -255,17 +264,14 @@
                     url: query,
                     payload: null,
                 }).then(function(){
-                    this.currentStat = {};
-                    this.scheduler.stop();
-                    this.scheduler = {};
-                    this.clearTaskQueue();
-                    this.options.runningQueue = [];
+                    self.currentStat = {};
+                    self.scheduler.stop();
+                    self.scheduler = {};
+                    self.clearTaskQueue();
+                    self.options.runningQueue = [];
 
-                    this.calATime();
+                    self.calATime();
                 })
-
-
-
 
             },
             con: function(){

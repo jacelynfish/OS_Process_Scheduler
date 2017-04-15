@@ -178,11 +178,14 @@
             taskInput,
             mainHeader
         },
-        created (){
+        created (to, from, next){
             this.addCurrentTask(this.defaultTasks);
             this.currentTasks = this.getCurrentTasks;
         },
-
+        beforeRouteLeave(to, from, next){
+            this.clearTasks();
+            next();
+        },
         computed:{
             ...mapGetters([
                 'getCurrentTasks',
@@ -247,7 +250,8 @@
 
             ...mapMutations({
                 addCurrentTask: 'addTasks',
-                delTask: 'delTask'
+                delTask: 'delTask',
+                clearTasks: 'clearTasks'
             }),
 
             deleteTask(idx){

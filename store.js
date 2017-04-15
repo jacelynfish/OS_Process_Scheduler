@@ -17,6 +17,7 @@ const store = new Vuex.Store({
 
             return state.currentTasks;
         },
+
         isNewAdded (state){
             return state.isNewAdded;
         },
@@ -40,6 +41,9 @@ const store = new Vuex.Store({
 
         addTasks(state , newTask){
             state.currentTasks.push(...newTask);
+        },
+        clearTasks(state){
+            state.currentTasks.length = 0;
         },
         delTask(state, idx){
             state.currentTasks.splice(idx, 1);

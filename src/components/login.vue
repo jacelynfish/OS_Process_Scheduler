@@ -310,11 +310,13 @@
                     var req = request(opts);
 
                     req.then(function() {
+                        console.log('hello');
                         self.$router.push({
                             name: 'mainscheduler'
                         });
                         return Promise.resolve();
                     }).catch(function(mes){
+                        console.log('hello');
                         self.statusMes = mes;
                     })
 

@@ -22,7 +22,6 @@ router.post('/checkUser',function(req, res, next){
                     db.close();
                 }
             }).catch(function(err){
-                console.log(err);
                 res.status(err);
                 res.send("User does not exist.");
                 db.close();
