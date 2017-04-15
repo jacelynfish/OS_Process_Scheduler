@@ -13,7 +13,7 @@ function PreScheduler(options){
         isStepDebug = options.isStepDebug,
         timer = false,
         timeSlot = options.timeSlot || 4,
-        sortMethod = options.sortMethod || 'remainTime',
+        sortMethod = options.sortedMethod || 'remainTime',
         currentTask = {},
         self = this,
         elapseTimer = null,

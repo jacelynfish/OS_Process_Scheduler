@@ -1,7 +1,7 @@
 .DS_Store
 node_modules/
 dist/
-public/
+app/public/
 .idea/
 *.(png|gif)
 *.pdf

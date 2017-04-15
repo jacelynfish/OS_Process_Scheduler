@@ -6,7 +6,7 @@
                 <select v-model="options.type" @change="changeSchedulerMode">
                     <option v-for="(type, key) in schedulerType" :value="key">{{type}}</option>
                 </select>
-                <select v-if="isSecondChoose" v-model="options.sortMethod">
+                <select v-if="isSecondChoose" v-model="options.sortedMethod">
                     <option value="remainTime">Shortest Job first</option>
                     <option value="priority">Priority</option>
                 </select>
