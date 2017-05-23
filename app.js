@@ -28,6 +28,13 @@ Vue.mixin({
     },
 
 });
+Vue.directive('focus',{
+    bind:function(el, binding, vnode){
+            console.log(JSON.stringify(binding));
+            console.log(binding.value, binding.expression);
+    }
+
+})
 new Vue({
     el: '#app',
     template:`
@@ -39,6 +46,7 @@ new Vue({
     },
     store,
     router,
+
 
 })
 

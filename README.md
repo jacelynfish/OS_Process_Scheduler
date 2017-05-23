@@ -1,6 +1,7 @@
 # Process Scheduler based on HTML5
 
 > A simulator of process scheduling algorithms. Course project for CO003 Operationg Systems - Spring 2017.
+Hongyuan Jin (1409853G-I011-0046)
 >
 
 
@@ -17,15 +18,10 @@
 
 ## Getting started
 
-Please ensure that your device has been successfully installed with [Node.js](https://nodejs.org/en/) of the lastest version (v 7.6.0+) for ES2015 functions support and [Mongodb](https://www.mongodb.com/). 
+Please ensure that your device has been successfully installed with [Node.js](https://nodejs.org/en/) of the lastest version (v 7.6.0+) for ES2015 functions support and [Mongodb](https://www.mongodb.com/). And then please enter these commands in cmd: 
 
 ```
-cd OS_Process_Scheduler
-npm i —save-dev
-cd app
-npm i —save-dev
-cd bin
-node www
+npm run-script run
 ```
 
 And then you can access the site through http://localhost:3000

@@ -50,7 +50,7 @@ module.exports = {
 						camelCase: true
 					},
 					loaders:{
-						js: 'babel-loader?{"presets":["es2017"], "plugins": ["transform-object-rest-spread"]}',
+						js: 'babel-loader?{"presets":["es2017"], "plugins": ["transform-object-rest-spread", "transform-vue-jsx"]}',
 
 						css: extractCSS.extract({
 							use: 'css-loader',
